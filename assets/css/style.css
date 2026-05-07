@@ -478,6 +478,7 @@ nav {
   flex-direction: column;
   align-items: center;
   text-align: center;
+  min-width: 0;
 }
 .system-card:hover {
   border-color: var(--primary-color);
@@ -688,6 +689,7 @@ nav {
   position: absolute;
   top: 12px;
   right: 12px;
+  pointer-events: all;
 }
 .menu-toggle {
   background: transparent;

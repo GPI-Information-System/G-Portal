@@ -402,6 +402,7 @@ body {
   text-align: center;
   box-shadow: var(--shadow-xs);
   cursor: pointer;
+  min-width: 0;
 }
 
 .system-card-viewer:hover {

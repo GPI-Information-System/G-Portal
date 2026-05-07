@@ -315,7 +315,7 @@ $canScheduleMaintenance = isSuperAdmin() || isAdmin();
                                     <?php echo $statusLabel; ?>
                                 </div>
                                 <h3 class="card-title"><?php echo htmlspecialchars($system['name']); ?></h3>
-                                <a href="#" class="card-domain" onclick="openDomain(<?php echo $system['id']; ?>);return false;"><?php echo htmlspecialchars($system['domain']); ?></a>
+                                <a href="#" class="card-domain" onclick="openDomain(<?php echo $system['id']; ?>);return false;" title="<?php echo htmlspecialchars($system['domain']); ?>"><?php echo htmlspecialchars($system['domain']); ?></a>
                             </div>
                             <div class="card-menu">
                                 <button class="menu-toggle" onclick="toggleDropdown(event,<?php echo $system['id']; ?>)">

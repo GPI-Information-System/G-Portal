@@ -275,7 +275,7 @@ $isJapaneseAccess = filter_var($hostWithoutPort, FILTER_VALIDATE_IP) !== false;
                                 <h3 class="system-name-viewer">
                                     <?php echo htmlspecialchars($system['name']); ?>
                                 </h3>
-                                <span class="system-domain-viewer"><?php echo htmlspecialchars($system['domain']); ?></span>
+                                <span class="system-domain-viewer" title="<?php echo htmlspecialchars($system['domain']); ?>"><?php echo htmlspecialchars($system['domain']); ?></span>
 
                                 <?php if (!empty($system['description'])): ?>
                                     <p class="system-description-viewer"><?php echo htmlspecialchars($system['description']); ?></p>
