@@ -21,16 +21,21 @@ foreach ($dbCategories as $i => $cat) {
 // Fetch all systems 
 $result = $conn->query("SELECT *, COALESCE(japanese_domain, '') as japanese_domain FROM systems ORDER BY created_at DESC");
 $systems = [];
-while ($row = $result->fetch_assoc()) { $systems[] = $row; }
+while ($row = $result->fetch_assoc()) {
+    $systems[] = $row;
+}
 $conn->close();
 
-usort($systems, function($a, $b) {
+usort($systems, function ($a, $b) {
     return strcasecmp($a['name'] ?? '', $b['name'] ?? '');
 });
 
 $statusLabels = [
-    'online' => 'Online', 'offline' => 'Offline',
-    'maintenance' => 'Maintenance', 'down' => 'Down', 'archived' => 'Archived'
+    'online' => 'Online',
+    'offline' => 'Offline',
+    'maintenance' => 'Maintenance',
+    'down' => 'Down',
+    'archived' => 'Archived'
 ];
 
 $totalSystems = count(array_filter($systems, fn($s) => ($s['status'] ?? '') !== 'archived'));
@@ -42,6 +47,7 @@ $isJapaneseAccess = filter_var($hostWithoutPort, FILTER_VALIDATE_IP) !== false;
 ?>
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -50,6 +56,7 @@ $isJapaneseAccess = filter_var($hostWithoutPort, FILTER_VALIDATE_IP) !== false;
     <link rel="stylesheet" href="../assets/css/viewer.css?v=<?= time(); ?>">
     <link rel="stylesheet" href="../assets/css/notifications.css?v=<?= time(); ?>">
 </head>
+
 <body class="viewer-page">
     <header class="viewer-header">
         <div class="header-content">
@@ -83,7 +90,9 @@ $isJapaneseAccess = filter_var($hostWithoutPort, FILTER_VALIDATE_IP) !== false;
                         </div>
                         <div id="notificationList" class="notification-list">
                             <div class="notification-loading">
-                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle></svg>
+                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <circle cx="12" cy="12" r="10"></circle>
+                                </svg>
                                 <p>Loading...</p>
                             </div>
                         </div>
@@ -91,7 +100,9 @@ $isJapaneseAccess = filter_var($hostWithoutPort, FILTER_VALIDATE_IP) !== false;
                 </div>
                 <a href="../index.php?show=login" class="login-button-slide" id="loginButton">Admin Login</a>
                 <button class="arrow-toggle" id="arrowToggle" onclick="toggleLogin()">
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <polyline points="9 18 15 12 9 6"></polyline>
+                    </svg>
                 </button>
             </div>
         </div>
@@ -113,7 +124,7 @@ $isJapaneseAccess = filter_var($hostWithoutPort, FILTER_VALIDATE_IP) !== false;
 
                         <!-- Search box -->
                         <input type="text" id="viewerSearchBox" class="search-box-viewer"
-                               placeholder="Search systems..." onkeyup="searchSystemsViewer()" aria-label="Search systems">
+                            placeholder="Search systems..." onkeyup="searchSystemsViewer()" aria-label="Search systems">
 
                         <!-- Status Filter -->
                         <div class="filter-container-viewer">
@@ -156,10 +167,10 @@ $isJapaneseAccess = filter_var($hostWithoutPort, FILTER_VALIDATE_IP) !== false;
                                     <span class="filter-dot" style="background:var(--primary-light);"></span>All Categories
                                 </button>
                                 <?php foreach ($dbCategories as $cat): ?>
-                                <button type="button" onclick="filterCategoryViewer('<?php echo htmlspecialchars($cat['name']); ?>')" class="filter-item" data-cat="<?php echo htmlspecialchars($cat['name']); ?>">
-                                    <span class="filter-dot" style="background:var(--primary-color);"></span>
-                                    <?php echo htmlspecialchars($cat['name']); ?> Systems
-                                </button>
+                                    <button type="button" onclick="filterCategoryViewer('<?php echo htmlspecialchars($cat['name']); ?>')" class="filter-item" data-cat="<?php echo htmlspecialchars($cat['name']); ?>">
+                                        <span class="filter-dot" style="background:var(--primary-color);"></span>
+                                        <?php echo htmlspecialchars($cat['name']); ?> Systems
+                                    </button>
                                 <?php endforeach; ?>
                             </div>
                         </div>
@@ -231,7 +242,11 @@ $isJapaneseAccess = filter_var($hostWithoutPort, FILTER_VALIDATE_IP) !== false;
                 <?php if (empty($systems)): ?>
                     <div class="systems-grid-viewer">
                         <div class="empty-state-viewer">
-                            <svg width="80" height="80" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><line x1="9" y1="9" x2="15" y2="15"></line><line x1="15" y1="9" x2="9" y2="15"></line></svg>
+                            <svg width="80" height="80" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                                <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+                                <line x1="9" y1="9" x2="15" y2="15"></line>
+                                <line x1="15" y1="9" x2="9" y2="15"></line>
+                            </svg>
                             <h3>No Systems Available</h3>
                             <p>There are currently no systems to display</p>
                         </div>
@@ -240,55 +255,62 @@ $isJapaneseAccess = filter_var($hostWithoutPort, FILTER_VALIDATE_IP) !== false;
                     <div class="viewer-category-group" data-category="all">
                         <h3 class="viewer-section-title">Systems</h3>
                         <div class="systems-grid-viewer">
-                        <?php foreach ($systems as $system): ?>
-                            <?php
-                            $status        = $system['status'] ?? 'online';
-                            $statusLabel   = $statusLabels[$status] ?? 'Online';
-                            $contactNumber = $system['contact_number'] ?? '123';
-                            ?>
-                            <div class="system-card-viewer"
-                                data-system-id="<?php echo $system['id']; ?>"
-                                data-status="<?php echo htmlspecialchars($status); ?>"
-                                data-category="<?php echo htmlspecialchars($system['category'] ?? $dbCategories[0]['name'] ?? 'Direct'); ?>"
-                                data-contact-number="<?php echo htmlspecialchars($contactNumber); ?>"
-                                data-japanese-domain="<?php echo htmlspecialchars($system['japanese_domain'] ?? ''); ?>"
-                                data-description="<?php echo htmlspecialchars($system['description'] ?? ''); ?>"
-                                data-japanese-description="<?php echo htmlspecialchars($system['japanese_description'] ?? ''); ?>"
-                                data-network-type="<?php echo htmlspecialchars($system['network_type'] ?? 'https'); ?>"
-                                tabindex="0" role="article"
-                                onclick="openDomainViewer(this)"
-                                style="cursor: pointer;">
+                            <?php foreach ($systems as $system): ?>
+                                <?php
+                                $status        = $system['status'] ?? 'online';
+                                $statusLabel   = $statusLabels[$status] ?? 'Online';
+                                $contactNumber = $system['contact_number'] ?? '123';
+                                ?>
+                                <div class="system-card-viewer"
+                                    data-system-id="<?php echo $system['id']; ?>"
+                                    data-status="<?php echo htmlspecialchars($status); ?>"
+                                    data-category="<?php echo htmlspecialchars($system['category'] ?? $dbCategories[0]['name'] ?? 'Direct'); ?>"
+                                    data-contact-number="<?php echo htmlspecialchars($contactNumber); ?>"
+                                    data-japanese-domain="<?php echo htmlspecialchars($system['japanese_domain'] ?? ''); ?>"
+                                    data-description="<?php echo htmlspecialchars($system['description'] ?? ''); ?>"
+                                    data-japanese-description="<?php echo htmlspecialchars($system['japanese_description'] ?? ''); ?>"
+                                    data-network-type="<?php echo htmlspecialchars($system['network_type'] ?? 'https'); ?>"
+                                    tabindex="0" role="article"
+                                    onclick="openDomainViewer(this)"
+                                    style="cursor: pointer;">
 
-                                <?php if (!empty($system['logo']) && file_exists('../' . $system['logo'])): ?>
-                                    <img src="../<?php echo htmlspecialchars($system['logo']); ?>" alt="<?php echo htmlspecialchars($system['name']); ?> logo" class="system-logo-viewer">
-                                <?php else: ?>
-                                    <div class="system-logo-placeholder-viewer">
-                                        <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect></svg>
+                                    <?php if (!empty($system['logo']) && file_exists('../' . $system['logo'])): ?>
+                                        <img src="../<?php echo htmlspecialchars($system['logo']); ?>" alt="<?php echo htmlspecialchars($system['name']); ?> logo" class="system-logo-viewer">
+                                    <?php else: ?>
+                                        <div class="system-logo-placeholder-viewer">
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                                <rect x="3" y="3" width="7" height="7"></rect>
+                                                <rect x="14" y="3" width="7" height="7"></rect>
+                                                <rect x="14" y="14" width="7" height="7"></rect>
+                                                <rect x="3" y="14" width="7" height="7"></rect>
+                                            </svg>
+                                        </div>
+                                    <?php endif; ?>
+
+                                    <div class="status-badge-viewer status-<?php echo htmlspecialchars($status); ?>">
+                                        <span class="status-indicator-viewer"></span>
+                                        <?php echo $statusLabel; ?>
                                     </div>
-                                <?php endif; ?>
 
-                                <div class="status-badge-viewer status-<?php echo htmlspecialchars($status); ?>">
-                                    <span class="status-indicator-viewer"></span>
-                                    <?php echo $statusLabel; ?>
+                                    <h3 class="system-name-viewer">
+                                        <?php echo htmlspecialchars($system['name']); ?>
+                                    </h3>
+                                    <span class="system-domain-viewer" title="<?php echo htmlspecialchars($system['domain']); ?>"><?php echo htmlspecialchars($system['domain']); ?></span>
+
+                                    <?php if (!empty($system['description'])): ?>
+                                        <p class="system-description-viewer"><?php echo htmlspecialchars($system['description']); ?></p>
+                                    <?php endif; ?>
+
+                                    <?php if (in_array($status, ['maintenance', 'offline', 'down'])): ?>
+                                        <div class="system-contact-message">
+                                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                                <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path>
+                                            </svg>
+                                            Contact <span class="contact-number"><?php echo htmlspecialchars($contactNumber); ?></span> for assistance
+                                        </div>
+                                    <?php endif; ?>
                                 </div>
-
-                                <h3 class="system-name-viewer">
-                                    <?php echo htmlspecialchars($system['name']); ?>
-                                </h3>
-                                <span class="system-domain-viewer" title="<?php echo htmlspecialchars($system['domain']); ?>"><?php echo htmlspecialchars($system['domain']); ?></span>
-
-                                <?php if (!empty($system['description'])): ?>
-                                    <p class="system-description-viewer"><?php echo htmlspecialchars($system['description']); ?></p>
-                                <?php endif; ?>
-
-                                <?php if (in_array($status, ['maintenance', 'offline', 'down'])): ?>
-                                    <div class="system-contact-message">
-                                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path></svg>
-                                        Contact <span class="contact-number"><?php echo htmlspecialchars($contactNumber); ?></span> for assistance
-                                    </div>
-                                <?php endif; ?>
-                            </div>
-                        <?php endforeach; ?>
+                            <?php endforeach; ?>
                         </div>
                     </div>
                 <?php endif; ?>
@@ -297,15 +319,16 @@ $isJapaneseAccess = filter_var($hostWithoutPort, FILTER_VALIDATE_IP) !== false;
     </main>
 
     <footer class="viewer-footer">
-        <p> &copy; GPI (Information System). All rights reserved. </p>
+        <p> &copy; GPI (Information System). All rights reserved.</p>
+        <p>System Version 1.0.0</p>
     </footer>
 
     <script>
-        const TOTAL_SYSTEMS  = <?php echo $totalSystems; ?>;
-        const DB_CATEGORIES  = <?php echo json_encode(array_column($dbCategories, 'name')); ?>;
+        const TOTAL_SYSTEMS = <?php echo $totalSystems; ?>;
+        const DB_CATEGORIES = <?php echo json_encode(array_column($dbCategories, 'name')); ?>;
 
 
-        const AUTO_LANGUAGE  = '<?php echo $isJapaneseAccess ? 'jp' : 'en'; ?>';
+        const AUTO_LANGUAGE = '<?php echo $isJapaneseAccess ? 'jp' : 'en'; ?>';
 
         function toggleLogin() {
             const loginButton = document.getElementById('loginButton');
@@ -319,4 +342,5 @@ $isJapaneseAccess = filter_var($hostWithoutPort, FILTER_VALIDATE_IP) !== false;
     <script src="../assets/js/notifications.js?v=<?= time(); ?>"></script>
     <script src="../assets/js/health_check.js?v=<?= time(); ?>"></script>
 </body>
+
 </html>
