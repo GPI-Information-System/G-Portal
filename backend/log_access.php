@@ -1,6 +1,7 @@
-<?php
+﻿<?php
 
 require_once '../config/database.php';
+require_once '../config/ip.php';
 
 header('Content-Type: application/json');
 
@@ -29,20 +30,7 @@ if (!in_array($accessedFrom, ['grid', 'recents'])) {
 }
 
 
-if (!empty($_SERVER['HTTP_X_FORWARDED_FOR'])) {
-    $ipRaw     = $_SERVER['HTTP_X_FORWARDED_FOR'];
-    $ipAddress = trim(explode(',', $ipRaw)[0]);
-} elseif (!empty($_SERVER['HTTP_CLIENT_IP'])) {
-    $ipAddress = trim($_SERVER['HTTP_CLIENT_IP']);
-} else {
-    $ipAddress = $_SERVER['REMOTE_ADDR'] ?? '0.0.0.0';
-}
-
-
-if (!filter_var($ipAddress, FILTER_VALIDATE_IP)) {
-    $ipAddress = $_SERVER['REMOTE_ADDR'] ?? '0.0.0.0';
-}
-
+$ipAddress = function_exists('getClientIP') ? getClientIP() : ($_SERVER['REMOTE_ADDR'] ?? '0.0.0.0');
 
 $ipAddress = substr($ipAddress, 0, 45);
 
@@ -56,7 +44,8 @@ $stmt = $conn->prepare("
         (system_id, system_name, ip_address, browser_device, language_mode, accessed_from)
     VALUES (?, ?, ?, ?, ?, ?)
 ");
-$stmt->bind_param("isssss",
+$stmt->bind_param(
+    "isssss",
     $systemId,
     $systemName,
     $ipAddress,
@@ -73,4 +62,3 @@ if ($stmt->execute()) {
 
 $stmt->close();
 $conn->close();
-?>
