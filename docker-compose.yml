@@ -6,10 +6,10 @@ services:
     container_name: system-directory-app
     restart: unless-stopped
     volumes:
-      - ${DATA_BASE_PATH}/config/database.php:/var/www/html/config/database.php
-      - ${DATA_BASE_PATH}/uploads:/var/www/html/uploads
-      - ${DATA_BASE_PATH}/logs:/var/www/html/backend/logs
-      - ${DATA_BASE_PATH}/sessions:/var/www/html/sessions
+      - ${FILE_SERVER_PATH}/config/database.php:/var/www/html/config/database.php
+      - ${FILE_SERVER_PATH}/uploads:/var/www/html/uploads
+      - ${FILE_SERVER_PATH}/logs:/var/www/html/backend/logs
+      - ${FILE_SERVER_PATH}/sessions:/var/www/html/sessions
     ports:
       - "${APP_HOST_PORT}:80"
     environment:
