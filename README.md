@@ -1,27 +1,123 @@
+# System Directory
 
+A web-based **System Monitoring & Maintenance Management Platform** designed for tracking application health, scheduling maintenance activities, managing users, generating analytics, and providing public-facing status pages.
 
-Folder Structure
+---
+
+## Features
+
+### Core Features
+
+#### Authentication & Session Management
+
+- Role-based access control:
+  - Super Admin
+  - Admin
+  - Viewer
+- Secure PHP session handling
+
+#### System Dashboard
+
+- Add, edit, and delete systems
+- Real-time system health monitoring
+- Status cards and filters
+- Maintenance calendar integration
+
+#### Analytics & Reporting
+
+- Uptime and downtime reporting
+- Interactive charts
+- Search and pagination
+- PDF export support
+
+#### Public Viewer Pages
+
+- Read-only system status viewer
+- Public maintenance schedule viewer
+- Japanese translation support
+- System filtering and search
+
+#### Notification Center
+
+- Real-time status change alerts
+- Notification bell and panel
+- Toast notifications
+
+---
+
+### Maintenance Scheduling
+
+- Single-system maintenance scheduling
+- Bulk maintenance scheduling
+- Automatic schedule conflict detection
+- Monthly calendar view
+- Maintenance detail modal
+- Countdown timers
+- Exceeded duration tracking
+
+---
+
+### Email Notifications
+
+- Automatic alerts when systems go down/offline
+- Maintenance schedule notifications
+- Schedule creation, update, and cancellation emails
+- Change tracking showing exactly what changed
+- Recipient tag input with autocomplete
+- PHPMailer integration
+- File-based logging fallback when SMTP is unavailable
+
+---
+
+### Error Landing Page
+
+Custom branded **G-Portal Error Page** supporting:
+
+- `404` – Page Not Found
+- `403` – Access Denied
+- `500` – Internal Server Error
+- `503` – Service Unavailable
+- `maintenance` – System Under Maintenance
+- `down` – System Down
+- `offline` – System Offline
+
+#### Dynamic Features
+
+- Retrieves system details from the database
+- Displays maintenance information automatically
+- Shows contact information
+- Quick link back to the public status portal
+
+---
+
+# Folder Structure
+
+```text
 System-Directory/
+│
 ├── assets/
 │   ├── css/
-│   │   ├── style.css          — Main dashboard styles
-│   │   ├── maintenance.css    — Maintenance modal styles
-│   │   ├── analytics.css      — Analytics page styles
-│   │   └── users.css          — User management styles
+│   │   ├── style.css                 # Main dashboard styles
+│   │   ├── maintenance.css           # Maintenance modal styles
+│   │   ├── analytics.css             # Analytics page styles
+│   │   └── users.css                 # User management styles
+│   │
 │   └── js/
-│       ├── main.js            — Dashboard logic, chart, filters, CRUD
-│       ├── maintenance.js     — Calendar, maintenance modal, bulk scheduling
-│       ├── health_check.js    — Polling logic (every 10s), toast notifications
-│       ├── analytics.js       — Analytics page JS (search, pagination, charts)
-│       ├── viewer.js          — Viewer page JS (JP translation, filters, popover)
-│       ├── viewer_maintenance.js — Maintenance viewer JS (JP translation, filters, countdown)
-│       ├── notifications.js   — Notification bell and panel
-│       └── users.js           — User management CRUD
+│       ├── main.js                   # Dashboard logic, charts, filters, CRUD
+│       ├── maintenance.js            # Calendar, maintenance modal, bulk scheduling
+│       ├── health_check.js           # Polling logic (every 10s), toast notifications
+│       ├── analytics.js              # Analytics page JS
+│       ├── viewer.js                 # Viewer page (JP translation, filters, popovers)
+│       ├── viewer_maintenance.js     # Maintenance viewer utilities
+│       ├── notifications.js          # Notification bell and panel
+│       └── users.js                  # User management CRUD
+│
 ├── backend/
 │   ├── logs/
-│   │   ├── health_check.log   — Auto-rotating health check log (max 500 lines)
-│   │   ├── emails.log         — Auto-rotating email log (max 500 lines)
+│   │   ├── health_check.log          # Auto-rotating (max 500 lines)
+│   │   ├── emails.log                # Auto-rotating (max 500 lines)
 │   │   └── maintenance_emails.log
+│   │
 │   ├── add_system.php
 │   ├── edit_system.php
 │   ├── delete_system.php
@@ -29,121 +125,258 @@ System-Directory/
 │   ├── edit_user.php
 │   ├── delete_user.php
 │   ├── save_maintenance.php
-│   ├── trigger_health_check.php   — Main health check engine (badge + domain fallback)
-│   ├── check_systems_health.php   — Cron version of health check
-│   ├── get_analytics_data.php     — Analytics data endpoints
-│   ├── get_notifications.php      — Notification bell data
-│   ├── get_systems_status.php     — Live status for cards
-│   ├── send_email_notification.php — Email alerts (PHPMailer or file log)
+│   ├── trigger_health_check.php      # Main health check engine
+│   ├── check_systems_health.php      # Cron health check version
+│   ├── get_analytics_data.php
+│   ├── get_notifications.php
+│   ├── get_systems_status.php
+│   ├── send_email_notification.php
 │   ├── update_log_note.php
 │   └── logout.php
+│
 ├── config/
-│   ├── database.php           — DB connection, helper functions
-│   ├── session.php            — Session management, role helpers
-│   └── email_config.php       — SMTP configuration
+│   ├── database.php                  # DB connection and helpers
+│   ├── session.php                   # Session and role helpers
+│   └── email_config.php              # SMTP configuration
+│
 ├── pages/
-│   ├── dashboard.php          — Admin dashboard (system cards, calendar, chart)
-│   ├── analytics.php          — Analytics & Reports page
-│   ├── viewer.php             — Public viewer page (no login)
-│   ├── viewer_maintenance.php — Public maintenance schedule viewer
-│   └── users.php              — User management page (Super Admin only)
-├── sessions/                  — PHP session storage (local folder)
+│   ├── dashboard.php                 # Admin dashboard
+│   ├── analytics.php                 # Analytics & Reports
+│   ├── viewer.php                    # Public status page
+│   ├── viewer_maintenance.php        # Public maintenance page
+│   └── users.php                     # User management
+│
+├── sessions/                         # PHP session storage
+│
 ├── uploads/
-│   └── logos/                 — Uploaded system logos
-├── vendor/                    — PHPMailer (composer)
-└── index.php                  — Login page
+│   └── logos/                        # Uploaded system logos
+│
+├── vendor/                           # Composer dependencies (PHPMailer)
+│
+└── index.php                         # Login page
+```
 
+---
 
+# Architecture Overview
 
+## Frontend
 
+### CSS
 
-Features Summary
-Core Features
+- `style.css` – Main dashboard styling
+- `maintenance.css` – Maintenance scheduling UI
+- `analytics.css` – Analytics and reporting styles
+- `users.css` – User management styles
 
-Login & Session Management — Role-based access (Super Admin / Admin / Viewer)
-System Dashboard — Add, edit, delete, and monitor all systems
-Analytics — Charts, uptime reports, PDF export
-Viewer Page — Public read-only system status page
-Notification Bell — Real-time status change alerts
+### JavaScript
 
-Maintenance Scheduling 
+- `main.js` – Dashboard logic, charts, filters, CRUD
+- `maintenance.js` – Calendar and maintenance scheduling
+- `health_check.js` – 10-second polling and health monitoring
+- `analytics.js` – Analytics search, pagination, charts
+- `viewer.js` – Public status viewer
+- `viewer_maintenance.js` – Maintenance schedules and countdowns
+- `notifications.js` – Notification center
+- `users.js` – User management CRUD
 
-Single-system scheduling — Create, edit, delete schedules per system
-Bulk scheduling — Schedule maintenance for multiple systems at once
-Conflict detection — Pre-checks for active schedule conflicts before saving
-Calendar view — Monthly calendar with maintenance dots and side panel
-Schedule detail modal — View full details with exceeded duration tracking
+---
 
-Email Notifications 
+## Backend Modules
 
-IT alerts — Emails sent when a system goes down/offline
-Maintenance notifications — Emails sent on schedule create / update / cancel
-Change detection — Update emails show exactly what changed
-Email tag input — Per-schedule recipient management with autocomplete
-File logging fallback — Logs to backend/logs/ when PHPMailer unavailable
+### System Management
 
-Error Landing Page 
+- `add_system.php`
+- `edit_system.php`
+- `delete_system.php`
 
-Custom error page — Branded G-Portal error page for all HTTP error types
-Dynamic content — Pulls system name, contact number, and maintenance
-details from database automatically
-Error types — 404, 403, 500, 503, maintenance, down, offline
-G-Portal redirect — Right panel always links to viewer.php
+### User Management
 
+- `add_user.php`
+- `edit_user.php`
+- `delete_user.php`
 
+### Maintenance Management
 
+- `save_maintenance.php`
 
+### Health Monitoring
 
+#### trigger_health_check.php
 
+- Main health check engine
+- Badge status updates
+- Domain fallback support
 
+#### check_systems_health.php
 
+- Cron-compatible health checks
+- Scheduled monitoring
 
+### Analytics & Notifications
 
+- `get_analytics_data.php`
+- `get_notifications.php`
+- `get_systems_status.php`
+- `update_log_note.php`
 
+### Email Services
 
+#### send_email_notification.php
 
-Demo Accounts
-Super Admin: superadmin / admin123
+- SMTP delivery via PHPMailer
+- File logging fallback support
 
-Admin: admin / admin123
+---
 
+# Demo Accounts
 
+> For development and testing purposes only.
 
+## Super Admin
 
+```text
+Username: superadmin
+Password: admin123
+```
 
-Error page URL for testing:
+## Admin
 
-localhost:8080/system-directory/pages/error_page.php?type=404 - Page not found
-localhost:8080/system-directory/pages/error_page.php?type=500 - Internal Server Error
-localhost:8080/system-directory/pages/error_page.php?type=403 - Access Denied
-localhost:8080/system-directory/pages/error_page.php?type=maintenance&domain=youtube.com - System Under Maintenance
-localhost:8080/system-directory/pages/error_page.php?type=down&domain=youtube.com - System Down
+```text
+Username: admin
+Password: admin123
+```
 
+---
 
-/FOR DATA CLEARING IN DB/
+# Error Page Testing
 
+### 404 - Page Not Found
+
+```text
+http://localhost:8080/system-directory/pages/error_page.php?type=404
+```
+
+### 500 - Internal Server Error
+
+```text
+http://localhost:8080/system-directory/pages/error_page.php?type=500
+```
+
+### 403 - Access Denied
+
+```text
+http://localhost:8080/system-directory/pages/error_page.php?type=403
+```
+
+### Maintenance Mode
+
+```text
+http://localhost:8080/system-directory/pages/error_page.php?type=maintenance&domain=youtube.com
+```
+
+### System Down
+
+```text
+http://localhost:8080/system-directory/pages/error_page.php?type=down&domain=youtube.com
+```
+
+---
+
+# Logging
+
+The application maintains rotating logs under:
+
+```text
+backend/logs/
+├── health_check.log
+├── emails.log
+└── maintenance_emails.log
+```
+
+### Log Retention
+
+```text
+Maximum 500 lines per log file
+```
+
+---
+
+# Database Maintenance
+
+## Full Database Reset
+
+> Clears systems, maintenance schedules, and analytics history.
+
+```sql
 SET FOREIGN_KEY_CHECKS = 0;
+
 DELETE FROM maintenance_schedules;
 DELETE FROM status_logs;
 DELETE FROM systems;
+
 ALTER TABLE maintenance_schedules AUTO_INCREMENT = 1;
 ALTER TABLE status_logs AUTO_INCREMENT = 1;
 ALTER TABLE systems AUTO_INCREMENT = 1;
+
 SET FOREIGN_KEY_CHECKS = 1;
+```
 
+---
 
+## Analytics Data Reset Only
 
+> Clears analytics history while preserving system records.
 
-
-/DATA CLEAR ON ANALYTICS PAGE ONLY/
+```sql
 -- Clear all status change logs
 TRUNCATE TABLE status_logs;
 
 -- Clear all maintenance schedules
 TRUNCATE TABLE maintenance_schedules;
 
--- Only reset 'maintenance' systems back to 'online'
--- (since their schedules are now deleted, they'd be stuck in maintenance)
--- Down/offline/archived systems are left untouched
-UPDATE systems SET status = 'online', updated_at = NOW()
+-- Reset systems currently marked as maintenance
+UPDATE systems
+SET status = 'online',
+    updated_at = NOW()
 WHERE status = 'maintenance';
+```
+
+### Notes
+
+- Removes all maintenance schedules
+- Clears analytics and status history
+- Keeps all system records intact
+- Resets systems currently in maintenance mode back to `online`
+- Does not modify systems marked as:
+  - `down`
+  - `offline`
+  - `archived`
+
+---
+
+# Dependencies
+
+- PHP 8+
+- MySQL / MariaDB
+- PHPMailer
+- Composer
+- JavaScript (ES6+)
+- HTML5 / CSS3
+
+---
+
+# Key Highlights
+
+✅ Real-time Health Monitoring  
+✅ Maintenance Scheduling & Calendar Management  
+✅ Email Notification System  
+✅ Public Status Viewer Pages  
+✅ Analytics & Uptime Reporting  
+✅ User & Role Management  
+✅ Dynamic G-Portal Error Pages  
+✅ PHPMailer Integration with Logging Fallback  
+✅ Maintenance Conflict Detection  
+✅ Bulk Maintenance Scheduling  
+✅ Notification Center  
+✅ Public Maintenance Viewer
