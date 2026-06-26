@@ -3,7 +3,7 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
-    container_name: system-directory-app
+    container_name: portal-app
     restart: unless-stopped
     volumes:
       - ${FILE_SERVER_PATH}/config/database.php:/var/www/html/config/database.php
@@ -21,7 +21,7 @@ services:
 
   db:
     image: mariadb:10.4.32
-    container_name: system-directory-db
+    container_name: portal-db
     restart: unless-stopped
     environment:
       MYSQL_ROOT_PASSWORD: ${DB_ROOT_PASSWORD}
