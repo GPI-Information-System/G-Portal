@@ -1,0 +1,15 @@
+name: Deployment
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  trigger-deployment:
+    runs-on: self-hosted
+    steps:
+      - name: Ping Webhook
+        run: |
+          echo "Triggering deployment webhook..."
+          sleep 5
+          curl -k -X POST "${{ vars.WEBHOOK }}"

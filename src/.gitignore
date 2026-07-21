@@ -3,3 +3,4 @@ sessions/*
 uploads/*
 backend/logs/*
 config/database.php
+vendor/*

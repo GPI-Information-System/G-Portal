@@ -6,7 +6,7 @@ require_once __DIR__ . '/../config/email_config.php';
 require_once __DIR__ . '/../config/database.php';
 
 
-$phpmailerBase = __DIR__ . '/../vendor/phpmailer/src/';
+$phpmailerBase = __DIR__ . '/../vendor/phpmailer/phpmailer/src/';
 if (file_exists($phpmailerBase . 'Exception.php') &&
     file_exists($phpmailerBase . 'PHPMailer.php') &&
     file_exists($phpmailerBase . 'SMTP.php')) {
@@ -14,7 +14,7 @@ if (file_exists($phpmailerBase . 'Exception.php') &&
     require_once $phpmailerBase . 'PHPMailer.php';
     require_once $phpmailerBase . 'SMTP.php';
 } else {
-    error_log("G-Portal Email: PHPMailer files not found in vendor/phpmailer/src/");
+    error_log("G-Portal Email: PHPMailer files not found in vendor/phpmailer/phpmailer/src/");
 }
 
 // ── Log rotation settings ──────────────────────────────────

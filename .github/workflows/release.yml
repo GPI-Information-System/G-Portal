@@ -1,0 +1,63 @@
+name: Release
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  check-and-release:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Extract Version From Src Folder
+        id: get_version
+        run: |
+          VERSION=""
+
+          # Target regex looks for vX.X.X followed by an optional (- or +) and any characters that are NOT a '<'
+          REGEX="v[0-9]+\.[0-9]+\.[0-9]+([-+][^<]+)?"
+
+          if [ -f "src/index.php" ]; then
+            VERSION=$(grep -oE "$REGEX" src/index.php | head -n 1)
+          fi
+
+          if [ -z "$VERSION" ] && [ -f "src/login.php" ]; then
+            VERSION=$(grep -oE "$REGEX" src/login.php | head -n 1)
+          fi
+
+          if [ -z "$VERSION" ]; then
+            echo "❌ No valid version string found in src/index.php or src/login.php."
+            exit 1
+          fi
+
+          # Clean up any accidental trailing whitespace or carriage returns
+          FINAL_VERSION=$(echo "$VERSION" | tr -d '\r\n ' )
+
+          echo "Processed version for Git tag and Release: $FINAL_VERSION"
+          echo "version=$FINAL_VERSION" >> $GITHUB_OUTPUT
+
+      - name: Check If Tag Already Exists
+        id: check_tag
+        run: |
+          git fetch --tags
+          if git rev-parse "${{ steps.get_version.outputs.version }}" >/dev/null 2>&1; then
+            echo "Tag already exists. Skipping release generation."
+            echo "exists=true" >> $GITHUB_OUTPUT
+          else
+            echo "New version detected. Creating release..."
+            echo "exists=false" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Generate Notes and Publish Release
+        if: steps.check_tag.outputs.exists == 'false'
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ steps.get_version.outputs.version }}
+          name: ${{ steps.get_version.outputs.version }}
+          generate_release_notes: true
+          # Marks as pre-release if the version string explicitly carries a hyphen
+          prerelease: ${{ contains(steps.get_version.outputs.version, '-') }}

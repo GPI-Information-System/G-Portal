@@ -198,7 +198,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 </form>
 
                 <div class="form-footer">
-                    © GPI (Information System). All rights reserved. System Version 1.0.0
+                    © GPI (Information System). All rights reserved.
+                    <p class="version">v2.0.0</p>
                 </div>
 
             </div>

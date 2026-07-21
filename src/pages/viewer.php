@@ -320,7 +320,6 @@ $isJapaneseAccess = filter_var($hostWithoutPort, FILTER_VALIDATE_IP) !== false;
 
     <footer class="viewer-footer">
         <p> &copy; GPI (Information System). All rights reserved.</p>
-        <p>System Version 1.0.0</p>
     </footer>
 
     <script>
