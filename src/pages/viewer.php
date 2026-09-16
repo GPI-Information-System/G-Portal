@@ -24,6 +24,14 @@ $systems = [];
 while ($row = $result->fetch_assoc()) {
     $systems[] = $row;
 }
+
+$controlMonitoringDomains = getControlMonitoringDomainsBySystemDomains(array_column($systems, 'domain'));
+foreach ($systems as &$system) {
+    $systemDomain = normalizeProxyDomain($system['domain'] ?? '');
+    $system['japanese_domain'] = $controlMonitoringDomains[$systemDomain] ?? '';
+}
+unset($system);
+
 $conn->close();
 
 usort($systems, function ($a, $b) {

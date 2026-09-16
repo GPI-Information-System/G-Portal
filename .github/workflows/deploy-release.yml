@@ -1,4 +1,5 @@
-name: Release
+name: Release and Deploy
+
 on:
   push:
     branches:
@@ -9,6 +10,8 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: write
+    outputs:
+      should_deploy: ${{ steps.check_tag.outputs.exists == 'false' }}
     steps:
       - name: Checkout Code
         uses: actions/checkout@v4
@@ -17,8 +20,6 @@ jobs:
         id: get_version
         run: |
           VERSION=""
-
-          # Target regex looks for vX.X.X followed by an optional (- or +) and any characters that are NOT a '<'
           REGEX="v[0-9]+\.[0-9]+\.[0-9]+([-+][^<]+)?"
 
           if [ -f "src/index.php" ]; then
@@ -30,14 +31,11 @@ jobs:
           fi
 
           if [ -z "$VERSION" ]; then
-            echo "❌ No valid version string found in src/index.php or src/login.php."
+            echo "❌ No valid version string found."
             exit 1
           fi
 
-          # Clean up any accidental trailing whitespace or carriage returns
           FINAL_VERSION=$(echo "$VERSION" | tr -d '\r\n ' )
-
-          echo "Processed version for Git tag and Release: $FINAL_VERSION"
           echo "version=$FINAL_VERSION" >> $GITHUB_OUTPUT
 
       - name: Check If Tag Already Exists
@@ -45,10 +43,8 @@ jobs:
         run: |
           git fetch --tags
           if git rev-parse "${{ steps.get_version.outputs.version }}" >/dev/null 2>&1; then
-            echo "Tag already exists. Skipping release generation."
             echo "exists=true" >> $GITHUB_OUTPUT
           else
-            echo "New version detected. Creating release..."
             echo "exists=false" >> $GITHUB_OUTPUT
           fi
 
@@ -59,5 +55,15 @@ jobs:
           tag_name: ${{ steps.get_version.outputs.version }}
           name: ${{ steps.get_version.outputs.version }}
           generate_release_notes: true
-          # Marks as pre-release if the version string explicitly carries a hyphen
           prerelease: ${{ contains(steps.get_version.outputs.version, '-') }}
+
+  trigger-deployment:
+    runs-on: self-hosted
+    needs: check-and-release
+    if: needs.check-and-release.outputs.should_deploy == 'true'
+    steps:
+      - name: Ping Webhook
+        run: |
+          echo "📶 Pinging deployment webhook..."
+          sleep 5
+          curl -k -X POST "${{ vars.WEBHOOK }}"

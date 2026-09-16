@@ -1,20 +1,18 @@
 <?php
 /* G-Portal — Database Configuration*/
 
-// Database configuration
 define('DB_HOST',      '');
 define('DB_USER',      '');
 define('DB_PASS',      '');
 define('DB_NAME',      '');
-define('DB_CHARSET',   'utf8mb4');
-define('DB_COLLATION', 'utf8mb4_general_ci');
-
-
+define('DB_CHARSET',   '');
+define('DB_COLLATION', '');
 define('DB_PERSISTENT', false);
-define('DB_TIMEOUT',    5);  // Reduced from 10s to 5s
+define('DB_TIMEOUT',    5); 
 
 
-function getDBConnection() {
+function getDBConnection()
+{
     static $conn = null;
 
     // Reuse within the same request only
@@ -42,19 +40,22 @@ function getDBConnection() {
 }
 
 
-function getDBConnectionReadOnly() {
+function getDBConnectionReadOnly()
+{
     return getDBConnection();
 }
 
 
-function closeDBConnection($conn) {
+function closeDBConnection($conn)
+{
     if ($conn) {
         $conn->close();
     }
 }
 
 
-function executePreparedQuery($query, $params = [], $types = '') {
+function executePreparedQuery($query, $params = [], $types = '')
+{
     $conn = getDBConnection();
 
     $stmt = $conn->prepare($query);
@@ -84,7 +85,8 @@ function executePreparedQuery($query, $params = [], $types = '') {
 }
 
 
-function testDBConnection() {
+function testDBConnection()
+{
     try {
         $conn = getDBConnection();
         return $conn->ping();
@@ -93,4 +95,110 @@ function testDBConnection() {
         return false;
     }
 }
-?>
+
+
+/* Control and Monitoring System database configuration. */
+
+define('DB2_HOST', '');
+define('DB2_USER', '');
+define('DB2_PASS', '');
+define('DB2_NAME', '');
+define('DB2_CHARSET', '');
+define('DB2_TIMEOUT', 5);
+
+function isControlDatabaseConfigured()
+{
+    return DB2_HOST !== '' && DB2_USER !== '' && DB2_NAME !== '';
+}
+
+function getControlDBConnection()
+{
+    static $conn2 = null;
+
+    if (!isControlDatabaseConfigured()) {
+        return null;
+    }
+
+    if ($conn2 !== null && $conn2->ping()) {
+        return $conn2;
+    }
+
+    mysqli_report(MYSQLI_REPORT_OFF);
+    $conn2 = new mysqli(DB2_HOST, DB2_USER, DB2_PASS, DB2_NAME);
+
+    if ($conn2->connect_error) {
+        error_log('Control and Monitoring System database connection error: ' . $conn2->connect_error);
+        $conn2 = null;
+        return null;
+    }
+
+    $conn2->set_charset(DB2_CHARSET);
+    $conn2->options(MYSQLI_OPT_CONNECT_TIMEOUT, DB2_TIMEOUT);
+
+    return $conn2;
+}
+
+function getControlMonitoringDomainsBySystemDomains(array $systemDomains)
+{
+    $systemDomains = array_values(array_unique(array_filter(array_map(function ($domain) {
+        return normalizeProxyDomain($domain);
+    }, $systemDomains))));
+    if (empty($systemDomains)) {
+        return [];
+    }
+
+    $conn2 = getControlDBConnection();
+    if ($conn2 === null) {
+        return [];
+    }
+
+    $stmt = $conn2->prepare('SELECT domain_names, forward_host, forward_port FROM proxy_host');
+
+    if (!$stmt) {
+        error_log('Control and Monitoring System query prepare error: ' . $conn2->error);
+        return [];
+    }
+
+    if (!$stmt->execute()) {
+        error_log('Control and Monitoring System query error: ' . $stmt->error);
+        $stmt->close();
+        return [];
+    }
+
+    $result = $stmt->get_result();
+    $domains = [];
+    while ($row = $result->fetch_assoc()) {
+        $proxyDomains = json_decode($row['domain_names'] ?? '[]', true);
+        if (!is_array($proxyDomains)) {
+            continue;
+        }
+
+        $forwardHost = trim($row['forward_host'] ?? '');
+        $forwardPort = trim((string) ($row['forward_port'] ?? ''));
+        if ($forwardHost === '' || $forwardPort === '') {
+            continue;
+        }
+
+        foreach ($proxyDomains as $proxyDomain) {
+            $proxyDomain = normalizeProxyDomain($proxyDomain);
+            if (in_array($proxyDomain, $systemDomains, true)) {
+                $domains[$proxyDomain] = $forwardHost . ':' . $forwardPort;
+            }
+        }
+    }
+
+    $stmt->close();
+    return $domains;
+}
+
+function normalizeProxyDomain($domain)
+{
+    $domain = strtolower(trim((string) $domain));
+    if ($domain === '') {
+        return '';
+    }
+
+    $domain = preg_replace('#^https?://#', '', $domain);
+    $domain = explode('/', $domain, 2)[0];
+    return rtrim($domain, '.');
+}
