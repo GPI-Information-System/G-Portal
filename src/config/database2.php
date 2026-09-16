@@ -40,10 +40,6 @@ function getControlDBConnection()
     return $conn;
 }
 
-/**
- * Return NPM forward endpoints indexed by the matching proxy domain.
- * The empty result lets callers retain the primary-table fallback value.
- */
 function getControlMonitoringDomainsBySystemDomains(array $systemDomains)
 {
     $systemDomains = array_values(array_unique(array_filter(array_map(function ($domain) {
