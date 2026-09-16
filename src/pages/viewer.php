@@ -2,6 +2,7 @@
 //G-Portal Public Viewer Page 
 
 require_once '../config/database.php';
+require_once '../config/database2.php';
 
 $conn = getDBConnection();
 
@@ -24,6 +25,14 @@ $systems = [];
 while ($row = $result->fetch_assoc()) {
     $systems[] = $row;
 }
+
+$controlMonitoringDomains = getControlMonitoringDomainsBySystemDomains(array_column($systems, 'domain'));
+foreach ($systems as &$system) {
+    $systemDomain = normalizeProxyDomain($system['domain'] ?? '');
+    $system['japanese_domain'] = $controlMonitoringDomains[$systemDomain] ?? '';
+}
+unset($system);
+
 $conn->close();
 
 usort($systems, function ($a, $b) {
