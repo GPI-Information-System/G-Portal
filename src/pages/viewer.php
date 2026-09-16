@@ -2,7 +2,6 @@
 //G-Portal Public Viewer Page 
 
 require_once '../config/database.php';
-require_once '../config/database2.php';
 
 $conn = getDBConnection();
 
