@@ -1,11 +1,13 @@
 <?php
 require_once '../config/session.php';
 require_once '../config/database.php';
+require_once '../config/database2.php';
 
 requireLogin();
 $currentUser = getCurrentUser();
 
 $conn = getDBConnection();
+$conn2 = getControlDBConnection();
 
 // Load categories from DB 
 $catResult = $conn->query("SELECT id, name, sort_order FROM categories ORDER BY sort_order ASC, name ASC");
@@ -520,23 +522,12 @@ $canScheduleMaintenance = isSuperAdmin() || isAdmin();
                 </div>
 
 
-
                 <div class="form-group">
                     <label for="systemDomain">Domain <span style="color:var(--danger)">*</span></label>
                     <input type="text" id="systemDomain" name="domain" required placeholder="e.g., ams.gpi.com">
                 </div>
 
-              
-
-                <div class="form-group">
-                    <label for="systemJapaneseDomain">Japanese Domain <span style="font-weight:400;color:var(--gray-400);font-size:12px;">(Optional)</span></label>
-                    <input type="text" id="systemJapaneseDomain" name="japanese_domain" placeholder="e.g., glory.canteen.co.jp">
-                    <div class="field-helper-row">
-                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>
-                        Shown when Japanese translation is enabled
-                    </div>
-                </div>
-
+   
                 <div class="form-group">
                     <label for="systemBadgeUrl">Badge URL <span style="font-weight:400;color:var(--gray-400);font-size:12px;">(Optional)</span></label>
                     <input type="text" id="systemBadgeUrl" name="badge_url" placeholder="e.g., https://uptime.gpi.com/api/badge/33/status">
@@ -667,14 +658,19 @@ $canScheduleMaintenance = isSuperAdmin() || isAdmin();
                     <label for="editSystemDomain">Domain <span style="color:var(--danger)">*</span></label>
                     <input type="text" id="editSystemDomain" name="domain" required>
                 </div>
-                <div class="form-group">
-                    <label for="editSystemJapaneseDomain">Japanese Domain <span style="font-weight:400;color:var(--gray-400);font-size:12px;">(Optional)</span></label>
-                    <input type="text" id="editSystemJapaneseDomain" name="japanese_domain" placeholder="e.g., glory.canteen.co.jp">
-                    <div class="field-helper-row">
-                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>
-                        Shown when Japanese translation is enabled
-                    </div>
-                </div>
+                 <div class="form-group">
+                            <label for="editSystemJapaneseDomain">Japanese Domain <span style="font-weight:400;color:var(--gray-400);font-size:12px;">(Optional)</span></label>
+                            <input type="text" id="editSystemJapaneseDomain" name="japanese_domain" readonly
+                                placeholder="e.g., 192.168.1.1:80">
+                            <div class="field-helper-row">
+                                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <circle cx="12" cy="12" r="10"></circle>
+                                    <line x1="12" y1="8" x2="12" y2="12"></line>
+                                    <line x1="12" y1="16" x2="12.01" y2="16"></line>
+                                </svg>
+                                Shown when Japanese translation is enabled
+                            </div>
+                        </div>
 
                 <div class="form-group">
                     <label for="editSystemBadgeUrl">Badge URL <span style="font-weight:400;color:var(--gray-400);font-size:12px;">(Optional)</span></label>
