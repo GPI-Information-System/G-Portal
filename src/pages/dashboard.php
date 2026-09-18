@@ -6,7 +6,6 @@ requireLogin();
 $currentUser = getCurrentUser();
 
 $conn = getDBConnection();
-$conn2 = getControlDBConnection();
 
 // Load categories from DB 
 $catResult = $conn->query("SELECT id, name, sort_order FROM categories ORDER BY sort_order ASC, name ASC");
@@ -26,6 +25,14 @@ $systems = [];
 while ($row = $result->fetch_assoc()) {
     $systems[] = $row;
 }
+
+$controlMonitoringDomains = getControlMonitoringDomainsBySystemDomains(array_column($systems, 'domain'));
+foreach ($systems as &$system) {
+    $systemDomain = normalizeProxyDomain($system['domain'] ?? '');
+    $system['japanese_domain'] = $controlMonitoringDomains[$systemDomain] ?? '';
+}
+unset($system);
+
 $conn->close();
 
 $statusPriority = ['online' => 1, 'maintenance' => 2, 'down' => 3, 'offline' => 4, 'archived' => 5];

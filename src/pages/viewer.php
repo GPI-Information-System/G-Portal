@@ -19,7 +19,7 @@ foreach ($dbCategories as $i => $cat) {
 }
 
 // Fetch all systems 
-$result = $conn->query("SELECT *, COALESCE(japanese_domain, '') as japanese_domain FROM systems ORDER BY created_at DESC");
+$result = $conn->query("SELECT * FROM systems ORDER BY created_at DESC");
 $systems = [];
 while ($row = $result->fetch_assoc()) {
     $systems[] = $row;
